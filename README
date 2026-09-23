@@ -1,0 +1,683 @@
+# CarCare AI
+
+**AI-Powered Vehicle Maintenance Assistant**
+
+<p align="center">
+  <a href="http://127.0.0.1:8000/">
+    <strong>Launch Web Application</strong>
+  </a>
+</p>
+
+<p align="center">
+  Computer Vision · Retrieval-Augmented Generation · Local LLM · FastAPI
+</p>
+
+---
+
+## Overview
+
+CarCare AI is an AI-powered vehicle maintenance assistant that combines Computer Vision, Retrieval-Augmented Generation (RAG), and a local Large Language Model (LLM).
+
+The system allows users to upload an image of a vehicle, identify a visible vehicle part, and ask a maintenance-related question. The detected part and user question are then used to retrieve relevant information from an automotive maintenance document. A local LLM generates the final response based only on the retrieved context.
+
+The system is designed as a document-grounded maintenance assistant rather than an image-based mechanical fault diagnosis system.
+
+---
+
+## Problem Statement
+
+Automotive maintenance manuals contain extensive technical information, but finding the relevant information during a vehicle inspection can be time-consuming.
+
+CarCare AI provides an interactive interface that connects visual part identification with document-based maintenance information.
+
+The user can:
+
+* Upload a vehicle image.
+* Identify a visible vehicle part.
+* Ask a maintenance-related question.
+* Retrieve relevant information from the maintenance documentation.
+* Receive a generated answer with supporting document pages.
+
+---
+
+## System Architecture
+
+```text
+User
+ │
+ ├── Vehicle Image
+ └── Maintenance Question
+          │
+          ▼
+ ┌──────────────────────┐
+ │     YOLO11n-Seg      │
+ │ Vehicle Part         │
+ │ Detection            │
+ └──────────┬───────────┘
+            │
+      Detected Part
+            │
+            ▼
+ ┌──────────────────────┐
+ │     Hybrid RAG       │
+ │                      │
+ │ Semantic Retrieval   │
+ │        +             │
+ │ Keyword Retrieval   │
+ └──────────┬───────────┘
+            │
+      Retrieved Context
+            │
+            ▼
+ ┌──────────────────────┐
+ │       Ollama         │
+ │     Llama 3.2:3b     │
+ └──────────┬───────────┘
+            │
+            ▼
+    Maintenance Answer
+            │
+            ▼
+     Supporting Sources
+```
+
+---
+
+## How It Works
+
+### 1. Vehicle Part Detection
+
+The uploaded image is processed using a custom-trained YOLO11n segmentation model.
+
+The model identifies visible vehicle parts and returns:
+
+* Detected class
+* Confidence score
+* Segmentation information
+
+Example:
+
+```text
+Detected Part: wheel
+Confidence: 0.88
+```
+
+### 2. Query Construction
+
+The detected vehicle part is combined with the user's maintenance question.
+
+For example:
+
+```text
+Vehicle part: wheel
+Maintenance question: What are the common tyre faults?
+```
+
+Additional automotive terminology is used to improve retrieval for relevant topics such as tyres, tread, pressure, wheels, rims, inspection, and damage.
+
+### 3. Hybrid Retrieval
+
+The query is searched against the processed maintenance document using a combination of:
+
+* Semantic similarity
+* Keyword matching
+
+The retrieved chunks are ranked using a weighted score.
+
+```text
+Final Score =
+0.75 × Semantic Score
++
+0.25 × Keyword Score
+```
+
+### 4. Local LLM Generation
+
+The retrieved context is passed to Llama 3.2 3B through Ollama.
+
+The model is instructed to answer using only the retrieved maintenance information.
+
+### 5. Response
+
+The web application displays:
+
+* Detected vehicle part
+* Detection confidence
+* Maintenance guidance
+* Supporting PDF pages
+
+---
+
+## Computer Vision
+
+The Computer Vision component uses a custom-trained YOLO11n-Seg model based on the CarParts-Seg dataset.
+
+### Dataset Statistics
+
+| Property          |             Value |
+| ----------------- | ----------------: |
+| Total Images      |             3,833 |
+| Annotated Objects |            20,374 |
+| Classes           |                23 |
+| Annotation Type   | YOLO Segmentation |
+
+### Vehicle Part Classes
+
+```text
+back_bumper
+back_door
+back_glass
+back_left_door
+back_left_light
+back_light
+back_right_door
+back_right_light
+front_bumper
+front_door
+front_glass
+front_left_door
+front_left_light
+front_light
+front_right_door
+front_right_light
+hood
+left_mirror
+object
+right_mirror
+tailgate
+trunk
+wheel
+```
+
+---
+
+## Model Training
+
+The model was trained using:
+
+| Parameter               | Value       |
+| ----------------------- | ----------- |
+| Model                   | YOLO11n-Seg |
+| Epochs                  | 20          |
+| Image Size              | 640 × 640   |
+| Batch Size              | 4           |
+| Device                  | NVIDIA GPU  |
+| Early Stopping Patience | 5           |
+
+Best model:
+
+```text
+model_backup/carcare_yolo11n_seg_best.pt
+```
+
+---
+
+## Model Evaluation
+
+Evaluation was performed on 276 test images containing 1,599 annotated instances.
+
+| Metric         |        Result |
+| -------------- | ------------: |
+| Box Precision  |         59.6% |
+| Box Recall     |         81.7% |
+| Box mAP50      |         69.5% |
+| Box mAP50-95   |         57.7% |
+| Mask Precision |         61.4% |
+| Mask Recall    |         79.5% |
+| Mask mAP50     |         69.6% |
+| Mask mAP50-95  |         55.5% |
+| Inference Time | ~5.4 ms/image |
+
+---
+
+## Retrieval-Augmented Generation
+
+The RAG pipeline uses an automotive maintenance textbook:
+
+**Vehicle Maintenance Vehicle Fitting Units Level 1 and 2**
+
+The document contains approximately:
+
+| Property         |   Value |
+| ---------------- | ------: |
+| Pages            |     145 |
+| Non-empty Pages  |     144 |
+| Words            |  33,232 |
+| Characters       | 213,324 |
+| Generated Chunks |     302 |
+
+The document covers areas including:
+
+* Tyres and wheels
+* Braking systems
+* Suspension
+* Steering
+* Electrical systems
+* Batteries
+* Exhaust systems
+* Cooling systems
+* Clutch systems
+* Lubrication
+* Vehicle inspection
+* Component replacement
+* Fault identification
+* Workshop safety
+
+---
+
+## Document Processing
+
+The document processing pipeline performs:
+
+1. PDF text extraction
+2. Text cleaning
+3. Page-level organization
+4. Chunking
+5. Embedding generation
+6. Vector database storage
+
+Configuration:
+
+```text
+Chunk Size: 1000 characters
+Chunk Overlap: 150 characters
+Embedding Model: all-MiniLM-L6-v2
+Embedding Dimension: 384
+Vector Database: ChromaDB
+```
+
+Processed files:
+
+```text
+data/
+└── processed/
+    ├── pdf_pages_cleaned.json
+    ├── pdf_chunks.json
+    ├── dataset_inspection_summary.json
+    └── rag_config.json
+```
+
+---
+
+## Hybrid Retrieval
+
+The retrieval system combines semantic and lexical signals.
+
+Semantic retrieval uses the `all-MiniLM-L6-v2` embedding model.
+
+Keyword retrieval identifies relevant terms shared between the user query and document chunks.
+
+The final ranking score is calculated using:
+
+```text
+Final Score =
+0.75 × Semantic Score
++
+0.25 × Keyword Score
+```
+
+The system retrieves the top 5 relevant chunks before passing them to the LLM.
+
+---
+
+## Local LLM
+
+The generation layer uses:
+
+```text
+Runtime: Ollama
+Model: Llama 3.2 3B
+```
+
+Using a local model keeps the generation process independent of external LLM APIs.
+
+The model receives the retrieved maintenance context together with the user's question and generates the final response from that context.
+
+---
+
+## Evidence Control
+
+The system includes a simple evidence check before generating an answer for an image-detected part.
+
+If the retrieved maintenance document does not contain sufficient information about the detected part, the system returns a controlled response instead of generating unsupported maintenance guidance.
+
+Example:
+
+```text
+The available maintenance document does not provide enough specific
+information about the rear bumper to answer the question reliably.
+```
+
+This is intended to reduce unsupported responses when the source document does not adequately cover a particular component.
+
+---
+
+## Web Application
+
+The application provides a web-based interface for interacting with the complete pipeline.
+
+### Main Interface
+
+<p align="center">
+  <img src="docs/images/homepage.png" width="900">
+</p>
+
+### Inspection Result
+
+<p align="center">
+  <img src="docs/images/ai-result.png" width="900">
+</p>
+
+---
+
+## Example Workflow
+
+### Input
+
+Image of a vehicle wheel.
+
+Question:
+
+```text
+What are the common tyre faults?
+```
+
+### Computer Vision Output
+
+```text
+Detected Part: wheel
+Confidence: 88%
+```
+
+### Retrieved Maintenance Information
+
+The RAG system retrieves relevant sections covering topics such as:
+
+* Edge wear
+* Flat spots
+* Feathering
+* Tread cuts
+* Under-inflation
+* Over-inflation
+* Wheel alignment
+
+### Final Output
+
+The local LLM generates maintenance guidance based on the retrieved document context and the application displays the supporting PDF pages.
+
+---
+
+## Example Questions
+
+The system is designed for maintenance and inspection questions related to the detected component.
+
+Examples:
+
+```text
+What should I check when inspecting a wheel?
+
+What are the common tyre faults?
+
+What causes uneven tyre wear?
+
+What should I check about tyre pressure?
+
+What damage should I look for?
+```
+
+---
+
+## Technology Stack
+
+| Component               | Technology            |
+| ----------------------- | --------------------- |
+| Language                | Python                |
+| Computer Vision         | YOLO11n-Seg           |
+| Dataset                 | CarParts-Seg          |
+| Embeddings              | all-MiniLM-L6-v2      |
+| Vector Database         | ChromaDB              |
+| LLM Runtime             | Ollama                |
+| LLM                     | Llama 3.2 3B          |
+| Backend                 | FastAPI               |
+| Frontend                | HTML, CSS, JavaScript |
+| Deep Learning           | PyTorch               |
+| Model Framework         | Ultralytics           |
+| Development Environment | VS Code               |
+| GPU Acceleration        | CUDA                  |
+
+---
+
+## Backend API
+
+### `GET /`
+
+Serves the web application.
+
+### `POST /ask`
+
+Handles text-based maintenance questions.
+
+Example request:
+
+```json
+{
+  "question": "What should I check when inspecting a tyre?"
+}
+```
+
+### `POST /ask-with-image`
+
+Handles multimodal requests containing:
+
+* Vehicle image
+* Maintenance question
+
+Processing flow:
+
+```text
+Image
+  ↓
+YOLO Detection
+  ↓
+Detected Part
+  ↓
+RAG Retrieval
+  ↓
+Ollama
+  ↓
+Answer + Sources
+```
+
+Interactive API documentation is available through FastAPI Swagger UI:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## Project Structure
+
+```text
+CarCare_AI/
+│
+├── Data/
+│   ├── Vehicle Maintenance PDF
+│   └── carparts-seg/
+│       ├── images/
+│       ├── labels/
+│       └── carparts-seg.yaml
+│
+├── data/
+│   ├── processed/
+│   │   ├── pdf_pages_cleaned.json
+│   │   ├── pdf_chunks.json
+│   │   ├── dataset_inspection_summary.json
+│   │   └── rag_config.json
+│   │
+│   └── chroma_db/
+│
+├── docs/
+│   └── images/
+│       ├── homepage.png
+│       └── ai-result.png
+│
+├── model_backup/
+│   └── carcare_yolo11n_seg_best.pt
+│
+├── notebooks/
+│   ├── 01_data_inspection.ipynb
+│   ├── 02_rag_pipeline.ipynb
+│   └── 03_cv_yolo.ipynb
+│
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+│
+├── main.py
+├── rag.py
+├── cv.py
+└── README.md
+```
+
+---
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd CarCare_AI
+```
+
+### 2. Create the Virtual Environment
+
+```bash
+py -3.12 -m venv .venv
+```
+
+Activate it:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Start Ollama
+
+Install Ollama and make sure the local service is running.
+
+Pull the required model:
+
+```bash
+ollama pull llama3.2:3b
+```
+
+### 5. Start the Backend
+
+```bash
+python -m uvicorn main:app --reload
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000/
+```
+
+---
+
+## Project Scope
+
+The current system is designed around:
+
+```text
+Vehicle Part Identification
+            +
+Maintenance Information Retrieval
+            +
+Document-Grounded Answer Generation
+```
+
+The Computer Vision model identifies visible vehicle parts.
+
+It does not directly diagnose mechanical faults from an image.
+
+For example:
+
+```text
+Image
+  ↓
+Wheel detected
+```
+
+rather than:
+
+```text
+Image
+  ↓
+Wheel bearing failure diagnosed
+```
+
+The maintenance guidance is generated from the retrieved information in the maintenance document.
+
+---
+
+## Future Improvements
+
+Potential future extensions include:
+
+* Additional automotive maintenance documents
+* More recent technical documentation
+* Improved retrieval evaluation
+* Additional vehicle-part classes
+* Improved segmentation performance
+* Dashboard warning-light recognition
+* Multi-document RAG
+* Maintenance history integration
+* Voice interaction
+* Cloud deployment
+* Mobile interface
+* More advanced diagnostic capabilities
+
+---
+
+## Author
+
+**Rahma Mohamed**
+
+Computer Science Student
+Helwan University, Egypt
+
+**Interests:** Artificial Intelligence, Machine Learning, Computer Vision, Generative AI, RAG Systems, Data Science, and AI Engineering.
+
+---
+
+## Summary
+
+CarCare AI demonstrates an end-to-end AI application that combines computer vision, information retrieval, and local language-model generation.
+
+The system identifies a visible vehicle component, retrieves relevant information from an automotive maintenance document, and generates document-grounded maintenance guidance through a local LLM.
+
+```text
+Vehicle Image
+     ↓
+YOLO11n-Seg
+     ↓
+Vehicle Part
+     ↓
+Hybrid RAG
+     ↓
+ChromaDB
+     ↓
+Llama 3.2
+     ↓
+Maintenance Guidance
+```

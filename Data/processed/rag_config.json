@@ -1,0 +1,134 @@
+{
+  "project": "CarCare AI",
+  "knowledge_base": {
+    "source_file": "Vehicle Maintenance Vehicle Fitting Units Level 1 and 2 by Roy Brooks, Jack Hirst and John Whipp.pdf",
+    "pages": 145,
+    "chunks": 302
+  },
+  "chunking": {
+    "chunk_size": 1000,
+    "chunk_overlap": 150
+  },
+  "embedding": {
+    "model": "all-MiniLM-L6-v2",
+    "dimension": 384
+  },
+  "vector_database": {
+    "type": "ChromaDB",
+    "collection": "carcare_maintenance",
+    "documents": 302
+  },
+  "retrieval": {
+    "method": "hybrid",
+    "semantic_weight": 0.75,
+    "keyword_weight": 0.25,
+    "default_top_k": 5
+  },
+  "generation": {
+    "provider": "Ollama",
+    "model": "llama3.2:3b",
+    "local": true
+  },
+  "evaluation": [
+    {
+      "test": 1,
+      "question": "What are common hazards in a vehicle workshop?",
+      "retrieved_pages": [
+        7,
+        10,
+        11,
+        17,
+        25
+      ],
+      "num_unique_pages": 5,
+      "answer_length": 425
+    },
+    {
+      "test": 2,
+      "question": "What safety equipment should be worn in a workshop?",
+      "retrieved_pages": [
+        9,
+        10,
+        11,
+        12,
+        17
+      ],
+      "num_unique_pages": 5,
+      "answer_length": 731
+    },
+    {
+      "test": 3,
+      "question": "How should tyres be checked for damage?",
+      "retrieved_pages": [
+        55,
+        56,
+        59,
+        64,
+        68
+      ],
+      "num_unique_pages": 5,
+      "answer_length": 584
+    },
+    {
+      "test": 4,
+      "question": "What should be checked when inspecting a vehicle battery?",
+      "retrieved_pages": [
+        92,
+        93,
+        94,
+        96
+      ],
+      "num_unique_pages": 4,
+      "answer_length": 576
+    },
+    {
+      "test": 5,
+      "question": "What are common causes of brake problems?",
+      "retrieved_pages": [
+        97,
+        101,
+        105,
+        107
+      ],
+      "num_unique_pages": 4,
+      "answer_length": 591
+    },
+    {
+      "test": 6,
+      "question": "What should be checked in the suspension system?",
+      "retrieved_pages": [
+        17,
+        107,
+        108,
+        110,
+        111
+      ],
+      "num_unique_pages": 5,
+      "answer_length": 731
+    },
+    {
+      "test": 7,
+      "question": "What safety precautions should be followed when using hand tools?",
+      "retrieved_pages": [
+        14,
+        17,
+        23,
+        139
+      ],
+      "num_unique_pages": 4,
+      "answer_length": 796
+    },
+    {
+      "test": 8,
+      "question": "What should be considered when replacing vehicle components?",
+      "retrieved_pages": [
+        6,
+        47,
+        50,
+        122
+      ],
+      "num_unique_pages": 4,
+      "answer_length": 735
+    }
+  ]
+}

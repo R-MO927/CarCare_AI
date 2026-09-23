@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CarCare AI | Digital Auto Workshop</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-car-side"></i>
+            <span>CarCare <strong>AI</strong></span>
+        </div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#inspection">AI Inspection</a>
+            <a href="#parts">Vehicle Parts</a>
+            <a href="#about">About</a>
+        </nav>
+
+        <a href="#inspection" class="nav-button">
+            Start Inspection
+        </a>
+    </header>
+
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                <i class="fa-solid fa-microchip"></i>
+                AI-POWERED AUTOMOTIVE ASSISTANT
+            </div>
+
+            <h1>
+                Your Smart
+                <span>Automotive</span>
+                Maintenance Assistant
+            </h1>
+
+            <p>
+                Identify vehicle parts, ask maintenance questions,
+                and get AI-powered guidance from automotive maintenance knowledge.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#inspection" class="primary-button">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Start Inspection
+                </a>
+
+                <a href="#parts" class="secondary-button">
+                    Explore Vehicle Parts
+                </a>
+            </div>
+
+        </div>
+
+
+        <!-- Floating Technical Info -->
+        <div class="hero-status">
+            <div class="status-dot"></div>
+            <span>AI SYSTEM ONLINE</span>
+        </div>
+
+    </section>
+
+
+    <!-- Workshop Introduction -->
+    <section class="workshop-section">
+
+        <div class="section-heading">
+
+            <div class="small-title">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                DIGITAL AUTO WORKSHOP
+            </div>
+
+            <h2>
+                Intelligent Vehicle
+                <span>Inspection</span>
+            </h2>
+
+            <p>
+                Your digital garage for understanding vehicle parts,
+                maintenance procedures, and common inspection tasks.
+            </p>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+
+                <h3>Visual Inspection</h3>
+
+                <p>
+                    Upload a vehicle image and let AI identify
+                    visible vehicle components.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+
+                <h3>AI Maintenance Assistant</h3>
+
+                <p>
+                    Ask questions about the detected vehicle part
+                    and receive maintenance guidance.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+
+                <h3>Trusted Sources</h3>
+
+                <p>
+                    Answers are supported by retrieved information
+                    from the automotive maintenance document.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- AI Inspection -->
+    <section id="inspection" class="inspection-section">
+
+        <div class="section-heading">
+
+            <div class="small-title">
+                <i class="fa-solid fa-car-burst"></i>
+                AI VEHICLE INSPECTION
+            </div>
+
+            <h2>
+                Inspect Your
+                <span>Vehicle</span>
+            </h2>
+
+            <p>
+                Upload an image of a vehicle part and ask your maintenance question.
+            </p>
+
+        </div>
+
+
+        <div class="inspection-container">
+
+            <!-- Upload Area -->
+            <div class="upload-card">
+
+                <div class="upload-icon">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+
+                <h3>Upload Vehicle Image</h3>
+
+                <p>
+                    Upload a clear image of the vehicle or vehicle part.
+                </p>
+
+                <label for="vehicleImage" class="upload-button">
+                    <i class="fa-solid fa-image"></i>
+                    Choose Image
+                </label>
+
+                <input
+                    type="file"
+                    id="vehicleImage"
+                    accept="image/*"
+                    hidden
+                >
+
+                <div id="imagePreview" class="image-preview"></div>
+
+            </div>
+
+
+            <!-- Question Area -->
+            <div class="question-card">
+
+                <div class="card-label">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    YOUR MAINTENANCE QUESTION
+                </div>
+
+                <textarea
+                    id="question"
+                    placeholder="Example: What should I check when inspecting this part?"
+                ></textarea>
+
+                <button id="inspectButton" class="inspect-button">
+
+                    <span>
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                        Inspect Vehicle
+                    </span>
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Result -->
+        <div id="resultSection" class="result-section hidden">
+
+            <div class="result-header">
+                <div>
+                    <div class="small-title">
+                        <i class="fa-solid fa-robot"></i>
+                        AI INSPECTION RESULT
+                    </div>
+
+                    <h2>Vehicle Analysis</h2>
+                </div>
+
+                <div class="ai-online">
+                    <span></span>
+                    AI ONLINE
+                </div>
+            </div>
+
+
+            <div class="result-grid">
+
+                <div class="detected-card">
+
+                    <div class="result-icon">
+                        <i class="fa-solid fa-car"></i>
+                    </div>
+
+                    <div>
+                        <p>DETECTED PART</p>
+                        <h3 id="detectedPart">—</h3>
+                    </div>
+
+                </div>
+
+
+                <div class="confidence-card">
+
+                    <p>CONFIDENCE</p>
+
+                    <div class="confidence-value">
+                        <span id="confidenceValue">—</span>
+                    </div>
+
+                    <div class="confidence-bar">
+                        <div id="confidenceBar"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="answer-card">
+
+                <div class="answer-header">
+
+                    <div>
+                        <div class="small-title">
+                            <i class="fa-solid fa-brain"></i>
+                            CARCARE AI
+                        </div>
+
+                        <h3>Maintenance Guidance</h3>
+                    </div>
+
+                </div>
+
+                <div id="answerText" class="answer-text">
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="sources-card">
+
+                <div class="small-title">
+                    <i class="fa-solid fa-book"></i>
+                    MAINTENANCE SOURCES
+                </div>
+
+                <div id="sourcesList">
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Vehicle Parts -->
+    <section id="parts" class="parts-section">
+
+        <div class="section-heading">
+
+            <div class="small-title">
+                <i class="fa-solid fa-gears"></i>
+                VEHICLE COMPONENTS
+            </div>
+
+            <h2>
+                Explore Vehicle
+                <span>Parts</span>
+            </h2>
+
+            <p>
+                Common components that can be identified and discussed
+                through the CarCare AI system.
+            </p>
+
+        </div>
+
+
+        <div class="parts-grid">
+
+            <div class="part-card">
+                <i class="fa-solid fa-car-battery"></i>
+                <h3>Battery</h3>
+                <p>Electrical system</p>
+            </div>
+
+            <div class="part-card">
+                <i class="fa-solid fa-circle-stop"></i>
+                <h3>Brakes</h3>
+                <p>Safety system</p>
+            </div>
+
+            <div class="part-card">
+                <i class="fa-solid fa-circle-dot"></i>
+                <h3>Wheels</h3>
+                <p>Wheel system</p>
+            </div>
+
+            <div class="part-card">
+                <i class="fa-solid fa-lightbulb"></i>
+                <h3>Lights</h3>
+                <p>Lighting system</p>
+            </div>
+
+            <div class="part-card">
+                <i class="fa-solid fa-car"></i>
+                <h3>Body Parts</h3>
+                <p>Vehicle exterior</p>
+            </div>
+
+            <div class="part-card">
+                <i class="fa-solid fa-gauge-high"></i>
+                <h3>Gauges</h3>
+                <p>Vehicle monitoring</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer id="about">
+
+        <div class="footer-logo">
+            <i class="fa-solid fa-car-side"></i>
+            CarCare <strong>AI</strong>
+        </div>
+
+        <p>
+            AI-powered automotive maintenance assistance.
+        </p>
+
+        <div class="footer-line"></div>
+
+        <span>
+            CarCare AI • Digital Auto Workshop
+        </span>
+
+    </footer>
+
+
+    <script src="/static/script.js"></script>
+
+</body>
+</html>

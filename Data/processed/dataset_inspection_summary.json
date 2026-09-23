@@ -1,0 +1,59 @@
+{
+  "pdf": {
+    "filename": "Vehicle Maintenance Vehicle Fitting Units Level 1 and 2 by Roy Brooks, Jack Hirst and John Whipp.pdf",
+    "pages": 145,
+    "non_empty_pages": 144,
+    "empty_pages": [
+      1
+    ],
+    "total_characters": 213324,
+    "total_words": 33232,
+    "cleaned_output": "data/processed/pdf_pages_cleaned.json"
+  },
+  "carparts_seg": {
+    "total_images": 3833,
+    "splits": {
+      "train": {
+        "images": 3156,
+        "labels": 3156
+      },
+      "val": {
+        "images": 401,
+        "labels": 401
+      },
+      "test": {
+        "images": 276,
+        "labels": 276
+      }
+    },
+    "num_classes": 23,
+    "class_names": {
+      "0": "back_bumper",
+      "1": "back_door",
+      "2": "back_glass",
+      "3": "back_left_door",
+      "4": "back_left_light",
+      "5": "back_light",
+      "6": "back_right_door",
+      "7": "back_right_light",
+      "8": "front_bumper",
+      "9": "front_door",
+      "10": "front_glass",
+      "11": "front_left_door",
+      "12": "front_left_light",
+      "13": "front_light",
+      "14": "front_right_door",
+      "15": "front_right_light",
+      "16": "hood",
+      "17": "left_mirror",
+      "18": "object",
+      "19": "right_mirror",
+      "20": "tailgate",
+      "21": "trunk",
+      "22": "wheel"
+    },
+    "total_annotated_objects": 20374,
+    "empty_train_labels": 116,
+    "image_label_mismatches": 0
+  }
+}
